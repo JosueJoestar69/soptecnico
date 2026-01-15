@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <title>Fundamentos de Diagnóstico de Fallas de una PC</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e0e0;
+            animation: fadeIn 1s ease-in;
+            overflow-x: hidden;
+            margin-left: 80px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .saludo {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(0, 255, 136, 0.8);
+            padding: 10px 15px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            font-size: 20px;
+            font-weight: bold;
+            color: #000;
+            animation: slideIn 0.5s ease-out;
+            z-index: 1000;
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-100px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .main-content {
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #00ff88;
+            text-align: center;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px #00ff88;
+            animation: bounceIn 1s ease-out;
+            font-family: 'Impact', sans-serif;
+        }
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        section {
+            margin-bottom: 30px;
+            background-color: rgba(26, 26, 46, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+            border-left: 5px solid #00ff88;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(0, 255, 136, 0.5);
+        }
+        h2 {
+            color: #00ff88;
+            border-bottom: 3px solid #00ff88;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px #00ff88;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #e0e0e0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #00ff88;
+        }
+        th {
+            background-color: #1a1a2e;
+            color: #00ff88;
+            font-weight: bold;
+            text-shadow: 0 0 5px #00ff88;
+        }
+        tr:hover {
+            background-color: rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #00ff88;
+            color: #000;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            font-weight: bold;
+        }
+        .back-link:hover {
+            background-color: #00aa66;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+        }
+                .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: rgba(26, 26, 46, 0.95);
+            padding: 60px 20px 20px 20px;
+            box-shadow: 2px 0 20px rgba(0, 255, 136, 0.3);
+            border-right: 2px solid #00ff88;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            margin-bottom: 20px;
+            color: #00ff88;
+            text-align: center;
+            text-shadow: 0 0 10px #00ff88;
+        }
+        .sidebar table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: #e0e0e0;
+        }
+        .sidebar th, .sidebar td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #00ff88;
+        }
+        .sidebar th {
+            background-color: #1a1a2e;
+            color: #00ff88;
+            font-weight: bold;
+            text-shadow: 0 0 5px #00ff88;
+        }
+        .sidebar tr:hover {
+            background-color: rgba(0, 255, 136, 0.1);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+            cursor: pointer;
+        }
+        .sidebar a {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: color 0.3s ease;
+        }
+        .sidebar a:hover {
+            color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+        }
+        .search-container {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+}
+.search-input {
+    padding: 8px 12px;
+    border: 2px solid #00ff88;
+    border-radius: 20px;
+    background-color: rgba(26, 26, 46, 0.9);
+    color: #e0e0e0;
+    font-size: 14px;
+    outline: none;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    transition: box-shadow 0.3s;
+}
+.search-input:focus {
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+}
+.search-button {
+    padding: 8px 12px;
+    margin-left: 5px;
+    border: 2px solid #00ff88;
+    border-radius: 20px;
+    background-color: rgba(0, 255, 136, 0.8);
+    color: #000;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    transition: box-shadow 0.3s, background-color 0.3s;
+}
+.search-button:hover {
+    background-color: #00aa66;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.8);
+}
+.search-results {
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background-color: rgba(26, 26, 46, 0.95);
+    border: 1px solid #00ff88;
+    border-radius: 10px;
+    max-width: 300px;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    display: none;
+}
+.search-results ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.search-results li {
+    padding: 8px 12px;
+    border-bottom: 1px solid #00ff88;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+.search-results li:hover {
+    background-color: rgba(0, 255, 136, 0.1);
+}
+.search-results li:last-child {
+    border-bottom: none;
+}
+img{
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    border-radius: 30px;
+}
+    </style>
+</head>
+<body>
+<div class="search-container">
+    <input type="text" class="search-input" placeholder="Buscar en la página..." id="search-input">
+    <button class="search-button" id="search-button">Buscar</button>
+    <div class="search-results" id="search-results"></div>
+</div>
+ <div class="sidebar">
+        <h2>Temas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Título del Tema</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="index.html">Home</a></td>
+                </tr>
+                <tr>
+                    <td><a href="aplicaciones.html">Aplicaciones para proteger tu PC</a></td>
+                </tr>
+                <tr>
+                    <td><a href="partes.html">Partes internas de una PC</a></td>
+                </tr>
+                <tr>
+                    <td><a href="mantenimiento.html">Mantenimiento de una PC</a></td>
+                </tr>
+                <tr>
+                    <td><a href="diagnostico.html">Fundamentos de diagnóstico de fallas de una PC</a></td>
+                </tr>
+                 <tr>
+                    <td><a href="glosario.html">Glosario</a></td>
+                        <tr>
+        <td><a href="minijuego.html">Minijuego</a></td>
+    </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="saludo" id="saludo">Hola,</div>
+    
+    <div class="main-content">
+        <h1>Fundamentos de Diagnóstico de Fallas de una PC</h1>
+        
+        <section>
+            <h2>¿Por Qué Diagnosticar Fallas?</h2>
+            <p>El diagnóstico sistemático de fallas es clave para resolver problemas en PCs de manera eficiente. Como estudiante de bachillerato técnico en informática, aprender este proceso te prepara para roles en soporte técnico, ahorrando tiempo y dinero. A continuación, una tabla con los pasos fundamentales.</p>
+        </section>
+        
+        <section>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Paso</th>
+                        <th>Descripción</th>
+                        <th>Herramientas Útiles</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. Recopilar Información</td>
+                        <td>Pregunta al usuario sobre síntomas y cambios recientes.</td>
+                        <td>Cuaderno o software de tickets</td>
+                    </tr>
+                    <tr>
+                        <td>2. Inspección Visual</td>
+                        <td>Revisa conexiones y componentes por daños físicos.</td>
+                        <td>Ojos y linterna</td>
+                    </tr>
+                    <tr>
+                        <td>3. Pruebas Básicas</td>
+                        <td>Reinicia la PC y ejecuta escaneos de virus.</td>
+                        <td>Administrador de Tareas</td>
+                    </tr>
+                    <tr>
+                        <td>4. Diagnóstico Avanzado</td>
+                        <td>Usa software para probar hardware específico.</td>
+                        <td>MemTest86, CrystalDiskInfo</td>
+                    </tr>
+                    <tr>
+                        <td>5. Solución y Verificación</td>
+                        <td>Aplica la reparación y confirma el problema esté resuelto.</td>
+                        <td>Pruebas de estrés</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+         <img src="img5.png" width="600" height="500">
+        <a href="index.html" class="back-link">Volver al Inicio</a>
+    </div>
+
+    <script>
+        let nombre = localStorage.getItem('usuarioNombre') || 'Usuario';
+        document.getElementById("saludo").innerText = "Hola, " + nombre;
+
+    localStorage.setItem('usuarioNombre', nombre);
+    nombre = localStorage.getItem('usuarioNombre') || 'Usuario';
+    document.getElementById("saludo").innerText = "Hola, " + nombre;
+    
+
+    const globalContent = {
+        'index.html': 'soporte técnico importancia pc introducción estudiantes bachillerato informática',
+        'aplicaciones.html': 'aplicaciones proteger pc antivirus malware windows defender avast',
+        'partes.html': 'partes internas pc procesador ram disco duro tarjeta madre fuente alimentación',
+        'mantenimiento.html': 'mantenimiento pc limpieza actualizaciones optimización monitoreo',
+        'diagnostico.html': 'diagnóstico fallas pc pasos recopilar inspección pruebas avanzadas solución'
+    };
+
+    const searchInput = document.getElementById('search-input');
+    const searchButton = document.getElementById('search-button');
+    const searchResults = document.getElementById('search-results');
+    
+    function performSearch() {
+        const query = searchInput.value.toLowerCase().trim();
+        const resultsList = searchResults.querySelector('ul') || document.createElement('ul');
+        resultsList.innerHTML = '';
+        
+        if (query.length > 0) {
+            const elements = document.querySelectorAll('h1, h2, p, td');
+            let hasLocalResults = false;
+            
+            elements.forEach(element => {
+                const text = element.textContent.toLowerCase();
+                if (text.includes(query)) {
+                    const li = document.createElement('li');
+                    li.textContent = element.textContent.substring(0, 100) + '...';
+                    li.addEventListener('click', () => {
+                        element.scrollIntoView({ behavior: 'smooth' });
+                        searchResults.style.display = 'none';
+                    });
+                    resultsList.appendChild(li);
+                    hasLocalResults = true;
+                }
+            });
+
+            if (!hasLocalResults) {
+                let hasGlobalResults = false;
+                for (const [page, content] of Object.entries(globalContent)) {
+                    if (content.includes(query)) {
+                        const li = document.createElement('li');
+                        const pageName = page.replace('.html', '').replace('index', 'Home');
+                        li.textContent = `Ir a ${pageName} (contiene "${query}")`;
+                        li.addEventListener('click', () => {
+                            window.location.href = page;
+                        });
+                        resultsList.appendChild(li);
+                        hasGlobalResults = true;
+                    }
+                }
+                
+                if (!hasGlobalResults) {
+                    const li = document.createElement('li');
+                    li.textContent = 'No se encontraron resultados en ninguna página.';
+                    resultsList.appendChild(li);
+                }
+            }
+            
+            searchResults.appendChild(resultsList);
+            searchResults.style.display = 'block';
+        } else {
+            searchResults.style.display = 'none';
+        }
+    }
+    
+
+    searchInput.addEventListener('input', performSearch);
+
+    searchButton.addEventListener('click', performSearch);
+
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchButton.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+    </script>
+</body>
+</html>
